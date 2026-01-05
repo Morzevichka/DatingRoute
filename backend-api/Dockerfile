@@ -2,7 +2,7 @@ FROM maven:3.9.11-amazoncorretto-21 AS builder
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package -Pprod -DskipTests
+RUN rm -rf /root/.m2 && mvn clean package -Pprod -DskipTests -X
 
 FROM amazoncorretto:21-alpine AS corretto-jdk
 RUN apk add --no-cache binutils
@@ -34,6 +34,6 @@ WORKDIR /app
 
 USER 1000
 
-EXPOSE 8080
+EXPOSE 8081
 
 ENTRYPOINT ["/jre/bin/java", "-jar", "app.jar"]

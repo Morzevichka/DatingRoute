@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: test
+    password: test
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration,org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.actuate.autoconfigure.flyway.FlywayEndpointAutoConfiguration
+
+application:
+  security:
+    jwt:
+      secret-key: fklsdjnfjskrdfhnwerjkfhnerjfnerjkfnerjfgnerjkfnerjkfnwerjknferjnbnfgerjinferjfgnerfjgfnferjgn
+
+service:
+  frontend:
+    url: http://localhost:8080
+  ai:
+    url: http://localhost:8082
+    secret-key: secretkey
+  map:
+    url: http://localhost:8083

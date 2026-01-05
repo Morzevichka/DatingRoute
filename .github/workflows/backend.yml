@@ -1,0 +1,76 @@
+name: Backend CI
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend-api/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'backend-api/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: "corretto"
+          cache: "maven"
+
+      - name: Build Application
+        run: | 
+          cd ./backend-api
+          mvn clean package -DskipTests
+
+  test:
+    runs-on: ubuntu-22.04
+    name: Tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: "corretto"
+          cache: "maven"
+
+      - name: Run tests
+        env:
+          SPRING_PROFILES_ACTIVE: test
+        run: |
+          cd ./backend-api
+          mvn clean test
+
+  build-image:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-22.04
+    name: Build Docker Image
+    needs: [build, test]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build & Push to DockerHub
+        uses: docker/build-push-action@v6
+        with:
+          context: backend-api
+          platforms: linux/amd64
+          push: true
+          file: backend-api/Dockerfile
+          tags: ${{ secrets.DOCKER_USERNAME }}/dating-route-backend-api:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/dating-route-backend-api:latest

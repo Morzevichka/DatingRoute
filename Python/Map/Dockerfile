@@ -36,4 +36,4 @@ USER 1000
 
 EXPOSE 8083
 
-CMD [ "python", "-m", "uvicorn", "YandApi:app", "--host", "0.0.0.0", "--port", "8083" ]
+ENTRYPOINT [ "python", "-m", "uvicorn", "YandApi:app" ]

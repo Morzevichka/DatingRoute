@@ -8,7 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
+import org.hibernate.type.descriptor.jdbc.SqlTypedJdbcType;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +31,7 @@ public class MessageEntity {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @JdbcType(value= PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "message_type")
     private MessageType messageType;
 

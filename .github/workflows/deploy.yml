@@ -1,0 +1,64 @@
+name: CD
+on:
+  workflow_run:
+    workflows: ["Backend CI", "Frontend CI", "AI CI", "Map CI"]
+    types:
+      - completed
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: | 
+      github.event.workflow_run.conclusion == 'success' && 
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare Key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > key
+          chmod 600 key
+
+      - name: Copy deployment files via SSH
+        # rsync should be installed on the host
+        run: rsync -avz -e "ssh -i key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}" infra/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/opt/app/
+
+      - name: Create .env on server
+        uses: appleboy/ssh-action@v1
+        with:
+           host: ${{ secrets.SSH_HOST }}
+           username: ${{ secrets.SSH_USERNAME }}
+           key: ${{ secrets.SSH_KEY }}
+           port: ${{ secrets.SSH_PORT }}
+           script: |
+            cat <<EOF > /opt/app/.env
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+
+            AI_BACKEND_KEY=${{ secrets.AI_BACKEND_KEY }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+
+            REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+
+            AI_SECRET_KEY=${{ secrets.AI_SECRET_KEY }}
+            GEOCODER_KEY=${{ secrets.GEOCODER_KEY }}
+            GEOSUGGEST_KEY=${{ secrets.GEOSUGGEST_KEY }}
+            YANDEX_MAPS_API_KEY=${{ secrets.YANDEX_MAPS_API_KEY }}
+
+      - name: Pull Images & Deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            chmod 770 /opt/app/scripts/deploy.sh
+            /opt/app/scripts/deploy.sh

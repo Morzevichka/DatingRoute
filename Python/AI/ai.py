@@ -32,7 +32,6 @@ class SummarizeRequest(BaseModel):
 class ResultSummarization(BaseModel):
     points: list
 
-# Функция проверки ключа
 def verify_key(api_key: Optional[str]):
     if not AI_BACKEND_KEY:
         raise HTTPException(

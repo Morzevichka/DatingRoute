@@ -36,4 +36,4 @@ USER 1000
 
 EXPOSE 8082
 
-CMD [ "python", "-m", "uvicorn", "ai:app", "--host", "0.0.0.0", "--port", "8082" ]
+ENTRYPOINT [ "python", "-m", "uvicorn", "ai:app" ]

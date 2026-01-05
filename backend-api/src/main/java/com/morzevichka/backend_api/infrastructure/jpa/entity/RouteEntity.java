@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class RouteEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "route_type", nullable = false)
-    @JdbcType(value= PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private RouteType routeType = RouteType.PEDESTRIAN;
 
     @OneToOne(fetch = FetchType.LAZY)

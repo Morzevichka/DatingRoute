@@ -5,6 +5,7 @@ from typing import List
 import os
 import requests
 
+
 load_dotenv()
 app = FastAPI()
 GEOSUGGEST_KEY = os.getenv("GEOSUGGEST_KEY")
