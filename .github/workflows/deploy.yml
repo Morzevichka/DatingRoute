@@ -51,6 +51,7 @@ jobs:
             GEOCODER_KEY=${{ secrets.GEOCODER_KEY }}
             GEOSUGGEST_KEY=${{ secrets.GEOSUGGEST_KEY }}
             YANDEX_MAPS_API_KEY=${{ secrets.YANDEX_MAPS_API_KEY }}
+            EOF
 
       - name: Pull Images & Deploy
         uses: appleboy/ssh-action@v1

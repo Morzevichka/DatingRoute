@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - main
-#    paths:
-#      - "Python/Map/**"
+    paths:
+      - "Python/Map/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:

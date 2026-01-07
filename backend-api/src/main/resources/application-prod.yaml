@@ -14,3 +14,7 @@ service:
     secret-key: ${AI_BACKEND_KEY}
   map:
     url: ${MAP_SERVICE_URL}
+
+springdoc:
+  swagger-ui:
+    enabled: false

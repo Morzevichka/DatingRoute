@@ -43,7 +43,8 @@ public class SecurityConfig {
             "/error",
             "/docs*/**",
             "/swagger-ui*/**",
-            "/ws/**"
+            "/ws/**",
+            "/actuator/**"
     };
 
     @Bean

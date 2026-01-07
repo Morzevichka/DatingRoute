@@ -17,7 +17,7 @@ services:
       - AI_SERVICE_URL=http://ai:8082
       - MAP_SERVICE_URL=http://map:8083
     ports:
-      - "127.0.0.1:8081:8081"
+      - "8081:8081"
     depends_on:
       database:
         condition: service_healthy
